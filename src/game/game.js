@@ -7,7 +7,7 @@ const config = {
     roundPixels: true,
     parent: 'content',
     width: 400,
-    height: 240,
+    height: 400,
     physics: {
         default: 'arcade',
         arcade: {
@@ -23,17 +23,15 @@ export class Game extends Phaser.Game {
     constructor(config) {
         super(config);
     }
+
+    
+
 }
 
-let game;
-
 export function createGame() {
-    console.log('creating game');
-    game = new Game(config);
-    console.log('game 1', game);
+    return new Game(config);
 }
 
 export function getGame() {
-    console.log('game 2', game);
-    return game;
+    return window.Game;
 }
