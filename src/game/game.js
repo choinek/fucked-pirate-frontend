@@ -16,15 +16,21 @@ const config = {
             },
             debug: false
         }
+    },
+    scene: {
+        preload: preload,
     }
 };
 
 export class Game extends Phaser.Game {
-    constructor(config) {
-        super(config);
-    }
 
-    
+
+}
+
+function preload()
+{
+    this.load.image('pirate-johntardo', 'assets/pirate-johntardo.png');
+    this.add.image(32, 59, 'pirate-johntardo');
 
 }
 
