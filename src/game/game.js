@@ -6,8 +6,8 @@ const config = {
     pixelArt: true,
     roundPixels: true,
     parent: 'content',
-    width: 400,
-    height: 400,
+    width: window.innerWidth * window.devicePixelRatio,
+    height: window.innerHeight * window.devicePixelRatio,
     physics: {
         default: 'arcade',
         arcade: {
@@ -19,6 +19,7 @@ const config = {
     },
     scene: {
         preload: preload,
+        create: create
     }
 };
 
@@ -30,8 +31,11 @@ export class Game extends Phaser.Game {
 function preload()
 {
     this.load.image('pirate-johntardo', 'assets/pirate-johntardo.png');
-    this.add.image(32, 59, 'pirate-johntardo');
+}
 
+function create()
+{
+    this.add.image(32, 59, 'pirate-johntardo');
 }
 
 export function createGame() {
