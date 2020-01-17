@@ -1,0 +1,33 @@
+.header {
+    font-size: 180px;
+    color: #fff;
+    text-shadow: -6px -7px 20px red;
+}
+
+.subheader {
+    font-size: 120px;
+    color: #fff;
+    text-shadow: -6px -7px 20px red;
+}
+
+.loginBox {
+
+}
+
+.loginBox input {
+    font-size: 18px;
+    color: #e8faff;
+    text-shadow: 0px 0px 20px red;
+    line-height: 1.2;
+    display: block;
+    width: 50%;
+    margin: 0 auto;
+    height: 52px;
+    background: #000;
+    border: 0;
+    padding: 0 5px;
+}
+
+.loginBox img {
+    box-shadow: 1px 1px 20px red;
+}

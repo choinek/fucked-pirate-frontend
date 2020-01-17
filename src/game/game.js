@@ -5,7 +5,7 @@ const config = {
     type: Phaser.WEBGL,
     pixelArt: true,
     roundPixels: true,
-    parent: 'content',
+    parent: 'gameContainer',
     width: window.innerWidth * window.devicePixelRatio,
     height: window.innerHeight * window.devicePixelRatio,
     physics: {
@@ -100,6 +100,10 @@ function update() {
 
     function handlePlayers() {
         // foreach players table
+        console.log(window.App.state.players);
+        window.App.state.players.forEach(function(player) {
+            console.log(player);
+        });
     }
 
     function handleMovements() {
@@ -120,6 +124,7 @@ function update() {
     }
 
     handleMovements();
+    handlePlayers();
 }
 
 export function createGame() {
