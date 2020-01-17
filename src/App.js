@@ -5,9 +5,17 @@ import MainMenu from "./components/MainMenu";
 import { createGame } from "./game/game";
 
 class App extends React.Component {
-    constructor(props) {
-        super(props);
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({ 'asd': '1' });
+        }, 1000);
         window.Game = createGame();
+    }
+
+    componentDidUpdate() {
+        setTimeout(() => {
+            this.setState({ 'asd': 1 });
+        }, 1000);
     }
 
     render() {

@@ -12,7 +12,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: {
-                y: 800
+                y: 350
             },
             debug: true
         }
@@ -63,16 +63,14 @@ export class Game extends Phaser.Game {
 
 }
 
-function preload()
-{
+function preload() {
     this.load.image('pirate-johntardo', 'assets/pirate-johntardo.png');
 
     this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
     this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
 }
 
-function create()
-{
+function create() {
     const map = this.make.tilemap({ key: 'map' });
     const tileset = map.addTilesetImage('DeepForestTileset32', 'tiles');
 
@@ -84,36 +82,44 @@ function create()
     objectsLayer.setCollisionByProperty({ Collide: true });
 
     player = this.physics.add.image(32, 59, 'pirate-johntardo');
-
-    player.setBounce(0.2);
     player.body.setGravityY(300);
     player.setCollideWorldBounds(true);
 
     this.physics.add.collider(player, objectsLayer);
 }
 
-function update ()
-{
-    cursors = this.input.keyboard.createCursorKeys();
+function update() {
+    let that = this;
 
-    if (cursors.left.isDown)
-    {
-        player.setVelocityX(-160);
-    }
-    else if (cursors.right.isDown)
-    {
-        player.setVelocityX(160);
-    }
-    else
-    {
-        player.setVelocityX(0);
+    function createNewPlayer() {
+        let player2 = that.physics.add.image(32, 59, 'pirate-johntardo');
+        // player2.body.setGravityY(300);
+        // player2.setCollideWorldBounds(true);
+        // this.physics.add.collider(player2, objectsLayer);
     }
 
-    // if (cursors.up.isDown && player.body.touching.down)
-    if (cursors.up.isDown)
-    {
-        player.setVelocityY(-330);
+    function handlePlayers() {
+        // foreach players table
     }
+
+    function handleMovements() {
+        cursors = that.input.keyboard.createCursorKeys();
+
+        if (cursors.left.isDown) {
+            player.setVelocityX(-520);
+        } else if (cursors.right.isDown) {
+            player.setVelocityX(520);
+        } else {
+            player.setVelocityX(0);
+        }
+
+        if (cursors.up.isDown
+            && (player.body.newVelocity.y < 0.19 && player.body.newVelocity.y > 0.18)) {
+            player.setVelocityY(-330);
+        }
+    }
+
+    handleMovements();
 }
 
 export function createGame() {
