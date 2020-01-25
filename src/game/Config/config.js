@@ -12,7 +12,7 @@ export default {
         default: 'arcade',
         arcade: {
             gravity: {
-                y: 350
+                y: 500
             },
             debug: true
         }

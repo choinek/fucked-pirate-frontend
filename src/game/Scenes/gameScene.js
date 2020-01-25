@@ -4,6 +4,8 @@ import 'phaser';
 let player;
 let cursors;
 
+let jumpCounter = 2;
+
 export default class GameScene extends Phaser.Scene {
     constructor () {
         super('Game');
@@ -27,10 +29,23 @@ export default class GameScene extends Phaser.Scene {
         objectsLayer.setCollisionByProperty({Collide: true});
 
         player = this.physics.add.image(32, 59, 'pirate-johntardo');
+        // player.setBounce(0.2);
         player.body.setGravityY(1000);
         player.setCollideWorldBounds(true);
 
         this.physics.add.collider(player, objectsLayer);
+
+        // set the boundaries of our game world
+        this.physics.world.bounds.width = deepBackgroundLayer.width;
+        this.physics.world.bounds.height = deepBackgroundLayer.height;
+
+        // set bounds so the camera won't go outside the game world
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        // make the camera follow the player
+        this.cameras.main.startFollow(player);
+
+        // set background color, so the sky is not black
+        // this.cameras.main.setBackgroundColor('#ccccff');
     }
 
     update() {
@@ -61,8 +76,7 @@ export default class GameScene extends Phaser.Scene {
                 player.setVelocityX(0);
             }
 
-            if (cursors.up.isDown
-                && (player.body.newVelocity.y < 0.40 && player.body.newVelocity.y > 0.18)) {
+            if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
                 player.setVelocityY(-500);
             }
         }
