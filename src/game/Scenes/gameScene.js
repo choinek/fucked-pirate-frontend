@@ -170,7 +170,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         function handleServerTick() {
-            if (that.serverTick > 5) {
+            if (that.serverTick > 4) {
                 let playerData = window.App.state.player;
                 playerData.server.x = Math.round(player.x);
                 playerData.server.y = Math.round(player.y);
