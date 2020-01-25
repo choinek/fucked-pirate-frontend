@@ -3,6 +3,8 @@ import 'phaser';
 
 let player;
 let cursors;
+let keys;
+let konamiCodeText;
 
 export default class GameScene extends Phaser.Scene {
     constructor () {
@@ -56,6 +58,14 @@ export default class GameScene extends Phaser.Scene {
 
         this.physics.add.collider(player, objectsLayer);
 
+        const konamiCodeTextStyle = {
+            font: "32px Arial",
+            fill: "#ff0044",
+            wordWrap: true,
+            wordWrapWidth: player.width * 4, align: "center", backgroundColor: "#000"
+        };
+        konamiCodeText = this.add.text(0, 0, "You cheater!", konamiCodeTextStyle);
+
         // set the boundaries of our game world
         this.physics.world.bounds.width = deepBackgroundLayer.width;
         this.physics.world.bounds.height = deepBackgroundLayer.height;
@@ -67,6 +77,9 @@ export default class GameScene extends Phaser.Scene {
 
         // set background color, so the sky is not black
         // this.cameras.main.setBackgroundColor('#ccccff');
+
+        keys = this.input.keyboard.addKeys('Z,X');
+        this.input.keyboard.createCombo([ 38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13 ], { resetOnMatch: true }); // KONAMI code
     }
 
     update() {
@@ -88,7 +101,7 @@ export default class GameScene extends Phaser.Scene {
             });
         }
 
-        function handleMovements() {
+        function handleMovements(that) {
             if (cursors.left.isDown) {
                 player.setVelocityX(-520);
                 player.anims.play('left', true);
@@ -105,6 +118,19 @@ export default class GameScene extends Phaser.Scene {
             if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
                 player.setVelocityY(-500);
             }
+
+            if (keys.Z.isDown) {
+                console.log('Z');
+            }
+
+            if (keys.X.isDown) {
+                console.log('X');
+            }
+
+            that.input.keyboard.on('keycombomatch', function (event) {
+                konamiCodeText.x = player.x;
+                konamiCodeText.y = player.y - 100;
+            });
         }
 
         function handleGui() {
@@ -113,7 +139,7 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        handleMovements();
+        handleMovements(that);
         handlePlayers();
         handleGui();
     }
