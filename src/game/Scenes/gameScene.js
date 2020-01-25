@@ -3,6 +3,8 @@ import 'phaser';
 
 let player;
 let cursors;
+let keys;
+let konamiCodeText;
 
 export default class GameScene extends Phaser.Scene {
 
@@ -19,6 +21,14 @@ export default class GameScene extends Phaser.Scene {
         this.load.spritesheet('pirate-johntardo',
             'assets/player/pirateWalkSprite40px.png',
             { frameWidth: 44, frameHeight: 40 }
+        );
+        this.load.spritesheet('pirate-johntardo-cut',
+            'assets/player/pirateCutSprite40px.png',
+            { frameWidth: 44, frameHeight: 40 }
+        );
+        this.load.spritesheet('pirate-johntardo-shoot',
+            'assets/player/pirateShootSprite40px.png',
+            { frameWidth: 48, frameHeight: 40 }
         );
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.image('multiplayer-pirate-johntardo', 'assets/pirate-johntardo.png');
@@ -60,7 +70,29 @@ export default class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'cut',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-cut', { start: 0, end: 2 }),
+            frameRate: 6,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'shoot',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-shoot', { start: 0, end: 2 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
         this.physics.add.collider(player, this.objectsLayer);
+
+        const konamiCodeTextStyle = {
+            font: "32px Arial",
+            fill: "#ff0044",
+            wordWrap: true,
+            wordWrapWidth: player.width * 4, align: "center", backgroundColor: "#000"
+        };
+        konamiCodeText = this.add.text(-1000, -1000, "You cheater!", konamiCodeTextStyle);
 
         // set the boundaries of our game world
         this.physics.world.bounds.width = deepBackgroundLayer.width;
@@ -73,6 +105,9 @@ export default class GameScene extends Phaser.Scene {
 
         // set background color, so the sky is not black
         // this.cameras.main.setBackgroundColor('#ccccff');
+
+        keys = this.input.keyboard.addKeys('Z,X');
+        this.input.keyboard.createCombo([ 38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13 ], { resetOnMatch: true }); // KONAMI code
     }
 
     update() {
@@ -100,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
             });
         }
 
-        function handleMovements() {
+        function handleMovements(that) {
             if (cursors.left.isDown) {
                 player.setVelocityX(-520);
                 player.anims.play('left', true);
@@ -109,6 +144,10 @@ export default class GameScene extends Phaser.Scene {
                 player.setVelocityX(520);
                 player.anims.play('right', true);
                 player.flipX = false;
+            } else if (keys.Z.isDown) {
+                player.anims.play('cut', true);
+            } else if (keys.X.isDown) {
+                player.anims.play('shoot', true);
             } else {
                 player.setVelocityX(0);
                 player.anims.play('turn');
@@ -117,6 +156,11 @@ export default class GameScene extends Phaser.Scene {
             if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
                 player.setVelocityY(-500);
             }
+
+            that.input.keyboard.on('keycombomatch', function (event) {
+                konamiCodeText.x = player.x;
+                konamiCodeText.y = player.y - 100;
+            });
         }
 
         function handleGui() {
@@ -137,7 +181,7 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        handleMovements();
+        handleMovements(that);
         handlePlayers();
         handleGui();
         handleServerTick();
