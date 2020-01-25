@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { createGame } from "../../game/game";
+import BottomInterface from "../BottomInterface";
 
 class GameContainer extends Component {
 
@@ -10,7 +11,10 @@ class GameContainer extends Component {
 
     render() {
         return (
-            <div id="gameContainer"/>
+            <>
+                <div id="gameContainer"/>
+                <BottomInterface />
+            </>
         )
     }
 }

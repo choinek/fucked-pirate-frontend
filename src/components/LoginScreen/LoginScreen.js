@@ -21,10 +21,10 @@ class LoginScreen extends Component {
         const { loginPlayerHandler } = this.props;
         const { login } = this.state;
         if (login.length > 3) {
-            alert('Zalogowales sie jako ' + this.state.login);
+            alert('Logged in as ' + this.state.login);
             loginPlayerHandler(this.state.login);
         } else {
-            alert('Dlugosc wieksza niz 3 znaki ziom');
+            alert('Minimum login length: 3 letters.');
         }
     }
 
@@ -46,9 +46,11 @@ class LoginScreen extends Component {
                 <br/>
                 <br/>
                 <div className="loginBox">
-                    <input type="text" placeholder="Login" onChange={this.handleChange}/>
-                    <br/>
-                    <img src={Login} width="300" onClick={this.handleSubmit}/>
+                    <form onSubmit={this.handleSubmit}>
+                        <input type="text" placeholder="Login" onChange={this.handleChange}/>
+                        <br/>
+                        <img alt="Login" src={Login} width="300" onClick={this.handleSubmit}/>
+                    </form>
                 </div>
             </div>
         )
