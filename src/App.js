@@ -3,22 +3,52 @@ import './App.css';
 import GameContainer from "./components/GameContainer";
 import MainMenu from "./components/MainMenu";
 import LoginScreen from "./components/LoginScreen";
+import Backend from "./server/Backend";
 
-class App extends React.Component {
+class App extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            playerLoggedIn: false,
-            playerLogin: '',
-            players: new Map()
+            player: {
+                loggedIn: false,
+                login: '',
+                server: {
+                    w: '',
+                    x: 0,
+                    y: 0
+                }
+            },
+            players: [],
         };
     }
 
-    loginPlayerHandler(login) {
+    loginPlayerHandler = (login) => {
+        this.getBackend().sendData(
+            { l: login }
+        );
         this.setState({
-            playerLoggedIn: true,
-            playerLogin: login
+            player: {
+                loggedIn: true,
+                login: login,
+                server: {
+                    w: '',
+                    x: 0,
+                    y: 0
+                }
+            }
         })
+    };
+
+    updatePlayerHandler(playerData) {
+        this.setState({ player: playerData });
+        this.getBackend().sendData(this.state.player.server);
+    }
+
+    /**
+     * @returns {Backend}
+     */
+    getBackend() {
+        return window.Backend;
     }
 
     componentDidMount() {
@@ -26,6 +56,7 @@ class App extends React.Component {
             this.setState({ 'asd': '1' });
         }, 1000);
         window.App = this;
+        window.Backend = new Backend((data) => this.backendHandleData(data), (data) => this.backendLog(data));
     }
 
     componentDidUpdate() {
@@ -34,15 +65,25 @@ class App extends React.Component {
         // }, 1000);
     }
 
+    backendHandleData(data) {
+        if (data.players !== undefined) {
+            this.setState({players: data.players});
+        }
+    }
+
+    backendLog(message) {
+
+        console.log('backendLog');
+        console.log(message);
+    }
+
     render() {
         return (
             <div className="App">
-                {this.state.playerLoggedIn ?
-                    <GameContainer/>
+                {this.state.player.loggedIn ?
+                    <GameContainer player={this.state.player}/>
                     :
-                    <LoginScreen loginPlayerHandler={login => {
-                        this.loginPlayerHandler(login)
-                    }}/>
+                    <LoginScreen loginPlayerHandler={this.loginPlayerHandler}/>
                 }
             </div>
         );

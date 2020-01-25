@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { createGame } from "../../game/game";
 import BottomInterface from "../BottomInterface";
+import DeveloperInterface from "../DeveloperInterface";
 
 class GameContainer extends Component {
 
@@ -80,6 +81,7 @@ class GameContainer extends Component {
 
         return (
             <>
+                <DeveloperInterface player={this.props.player}/>
                 <div id="gameContainer"/>
                 <BottomInterface handyInventory={handyInventory}/>
             </>

@@ -9,7 +9,7 @@ class BottomInterface extends PureComponent {
         const { handyInventory } = this.props;
         let render;
         return handyInventory.map(function (element, i) {
-            return <div className="inventoryPanel" style={{
+            return <div className="inventoryPanel" key={i} style={{
                 left: 17 + (i * 65),
                 background: element.selected ? '#fff' : false
             }}>
