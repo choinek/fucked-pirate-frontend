@@ -33,6 +33,9 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.image('multiplayer-pirate-johntardo', 'assets/pirate-johntardo.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
+
+        this.load.audio('cut', ['assets/sounds/slash.wav']);
+        this.load.audio('shoot', ['assets/sounds/shoot.wav']);
     }
 
     create() {
@@ -82,6 +85,15 @@ export default class GameScene extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('pirate-johntardo-shoot', { start: 0, end: 2 }),
             frameRate: 8,
             repeat: -1
+        });
+
+        const cutSound = this.sound.add('cut', { volume: 0.2, loop: false });
+        const shootSound = this.sound.add('shoot', { volume: 0.2, loop: false });
+        player.on('animationrepeat-cut', function () {
+            cutSound.play();
+        });
+        player.on('animationrepeat-shoot', function () {
+            shootSound.play();
         });
 
         this.physics.add.collider(player, this.objectsLayer);
