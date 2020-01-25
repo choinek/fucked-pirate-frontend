@@ -4,15 +4,16 @@ import 'phaser';
 let player;
 let cursors;
 
-let jumpCounter = 2;
-
 export default class GameScene extends Phaser.Scene {
     constructor () {
         super('Game');
     }
 
     preload () {
-        this.load.image('pirate-johntardo', 'assets/pirate-johntardo.png');
+        this.load.spritesheet('pirate-johntardo',
+            'assets/player/pirateWalkSprite40px.png',
+            { frameWidth: 44, frameHeight: 40 }
+        );
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
     }
@@ -28,10 +29,30 @@ export default class GameScene extends Phaser.Scene {
 
         objectsLayer.setCollisionByProperty({Collide: true});
 
-        player = this.physics.add.image(32, 59, 'pirate-johntardo');
+        player = this.physics.add.sprite(50, 50, 'pirate-johntardo');
         // player.setBounce(0.2);
         player.body.setGravityY(1000);
         player.setCollideWorldBounds(true);
+
+        this.anims.create({
+            key: 'left',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo', { start: 1, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'turn',
+            frames: [ { key: 'pirate-johntardo', frame: 0 } ],
+            frameRate: 20
+        });
+
+        this.anims.create({
+            key: 'right',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo', { start: 1, end: 5 }),
+            frameRate: 10,
+            repeat: -1
+        });
 
         this.physics.add.collider(player, objectsLayer);
 
@@ -70,10 +91,15 @@ export default class GameScene extends Phaser.Scene {
         function handleMovements() {
             if (cursors.left.isDown) {
                 player.setVelocityX(-520);
+                player.anims.play('left', true);
+                player.flipX = true;
             } else if (cursors.right.isDown) {
                 player.setVelocityX(520);
+                player.anims.play('right', true);
+                player.flipX = false;
             } else {
                 player.setVelocityX(0);
+                player.anims.play('turn');
             }
 
             if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
