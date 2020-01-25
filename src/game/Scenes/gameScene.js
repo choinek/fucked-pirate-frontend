@@ -46,9 +46,9 @@ export default class GameScene extends Phaser.Scene {
 
         function handlePlayers() {
             // foreach players table
-            console.log(window.App.state.players);
+            // console.log(window.App.state.players);
             window.App.state.players.forEach(function(player) {
-                console.log(player);
+                // console.log(player);
             });
         }
 

@@ -3,5 +3,12 @@
     width: 680px;
     height: 118px;
     margin: 0 auto;
+    position: relative;
 }
 
+.inventoryPanel {
+    width: 59px;
+    height: 59px;
+    position: absolute;
+    top: 31px;
+}

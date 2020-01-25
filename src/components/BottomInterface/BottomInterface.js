@@ -1,20 +1,26 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import './BottomInterface.css';
 
-const PANEL_COUNT = 8;
+const PANEL_COUNT = 10;
 
-class BottomInterface extends Component {
+class BottomInterface extends PureComponent {
 
     preparePanels() {
-        for (let i = 0; i < PANEL_COUNT; i++) {
-            return <div className="panel">
-
+        const { handyInventory } = this.props;
+        let render;
+        return handyInventory.map(function (element, i) {
+            return <div className="inventoryPanel" style={{
+                left: 17 + (i * 65),
+                background: element.selected ? '#fff' : false
+            }}>
+                <div style={{
+                    background: element.background,
+                }}/>
             </div>
-        }
+        });
     }
 
     render() {
-
         return (
             <div id="BottomInterface">
                 {this.preparePanels()}
