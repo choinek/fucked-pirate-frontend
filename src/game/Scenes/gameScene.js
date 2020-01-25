@@ -20,6 +20,10 @@ export default class GameScene extends Phaser.Scene {
             'assets/player/pirateCutSprite40px.png',
             { frameWidth: 44, frameHeight: 40 }
         );
+        this.load.spritesheet('pirate-johntardo-shoot',
+            'assets/player/pirateShootSprite40px.png',
+            { frameWidth: 48, frameHeight: 40 }
+        );
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
     }
@@ -63,7 +67,14 @@ export default class GameScene extends Phaser.Scene {
         this.anims.create({
             key: 'cut',
             frames: this.anims.generateFrameNumbers('pirate-johntardo-cut', { start: 0, end: 2 }),
-            frameRate: 20,
+            frameRate: 6,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'shoot',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-shoot', { start: 0, end: 3 }),
+            frameRate: 8,
             repeat: -1
         });
 
@@ -124,7 +135,7 @@ export default class GameScene extends Phaser.Scene {
             } else if (keys.Z.isDown) {
                 player.anims.play('cut', true);
             } else if (keys.X.isDown) {
-                console.log('X');
+                player.anims.play('shoot', true);
             } else {
                 player.setVelocityX(0);
                 player.anims.play('turn');
