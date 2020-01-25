@@ -16,6 +16,10 @@ export default class GameScene extends Phaser.Scene {
             'assets/player/pirateWalkSprite40px.png',
             { frameWidth: 44, frameHeight: 40 }
         );
+        this.load.spritesheet('pirate-johntardo-cut',
+            'assets/player/pirateCutSprite40px.png',
+            { frameWidth: 44, frameHeight: 40 }
+        );
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
     }
@@ -56,6 +60,13 @@ export default class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'cut',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-cut', { start: 0, end: 2 }),
+            frameRate: 20,
+            repeat: -1
+        });
+
         this.physics.add.collider(player, objectsLayer);
 
         const konamiCodeTextStyle = {
@@ -64,7 +75,7 @@ export default class GameScene extends Phaser.Scene {
             wordWrap: true,
             wordWrapWidth: player.width * 4, align: "center", backgroundColor: "#000"
         };
-        konamiCodeText = this.add.text(0, 0, "You cheater!", konamiCodeTextStyle);
+        konamiCodeText = this.add.text(-1000, -1000, "You cheater!", konamiCodeTextStyle);
 
         // set the boundaries of our game world
         this.physics.world.bounds.width = deepBackgroundLayer.width;
@@ -110,6 +121,10 @@ export default class GameScene extends Phaser.Scene {
                 player.setVelocityX(520);
                 player.anims.play('right', true);
                 player.flipX = false;
+            } else if (keys.Z.isDown) {
+                player.anims.play('cut', true);
+            } else if (keys.X.isDown) {
+                console.log('X');
             } else {
                 player.setVelocityX(0);
                 player.anims.play('turn');
@@ -117,14 +132,6 @@ export default class GameScene extends Phaser.Scene {
 
             if ((cursors.up.isDown || cursors.space.isDown) && player.body.onFloor()) {
                 player.setVelocityY(-500);
-            }
-
-            if (keys.Z.isDown) {
-                console.log('Z');
-            }
-
-            if (keys.X.isDown) {
-                console.log('X');
             }
 
             that.input.keyboard.on('keycombomatch', function (event) {
