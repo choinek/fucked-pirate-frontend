@@ -73,7 +73,7 @@ export default class GameScene extends Phaser.Scene {
 
         this.anims.create({
             key: 'shoot',
-            frames: this.anims.generateFrameNumbers('pirate-johntardo-shoot', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-shoot', { start: 0, end: 2 }),
             frameRate: 8,
             repeat: -1
         });
