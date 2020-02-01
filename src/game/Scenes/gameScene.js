@@ -9,6 +9,10 @@ let konamiCodeText;
 export default class GameScene extends Phaser.Scene {
 
     serverTick = 0;
+    /**
+     *
+     * @type {Map<string, ArcadeImage>}
+     */
     players = new Map();
 
     objectsLayer;
@@ -138,9 +142,34 @@ export default class GameScene extends Phaser.Scene {
             window.App.state.players.map(function (player) {
                 if (that.players.has(player.name)) {
                     that.players.set(player.name, player);
+                    /**
+                     * @type {ArcadeImage}
+                     */
                     let playerImageObject = that.players.get(player.name + '__phaserObject');
-                    playerImageObject.x = player.p.x;
-                    playerImageObject.y = player.p.y;
+                    /**
+                     * @todo better movement
+                     */
+                    if (playerImageObject.x != player.p.x) {
+                        if (playerImageObject.movementX == 0) {
+                            playerImageObject.movementX = Math.round(Math.abs(playerImageObject.x - player.p.x) / 3);
+                        }
+
+                        const movement = Math.round(Math.abs(playerImageObject.x - player.p.x) / 3);
+                        playerImageObject.x = playerImageObject.x > player.p.x
+                            ? playerImageObject.x - movement
+                            : playerImageObject.x + movement;
+                        // playerImageObject.x = player.p.x;
+                    } else {
+                        playerImageObject.movementX = 0;
+                    }
+
+                    if (playerImageObject.y != player.p.y) {
+                        const movement = Math.round(Math.abs(playerImageObject.y - player.p.y) / 3);
+                        playerImageObject.y = playerImageObject.y > player.p.y
+                            ? playerImageObject.y - movement
+                            : playerImageObject.y + movement;
+                        // playerImageObject.y = player.p.y;
+                    }
                 } else {
                     createNewPlayer(player);
                 }
