@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { createGame } from "../../game/game";
 import BottomInterface from "../BottomInterface";
 import DeveloperInterface from "../DeveloperInterface";
+import "./GameContainer.css";
+import RightColumnInterface from "../RightColumnInterface";
 
 class GameContainer extends Component {
 
@@ -62,6 +64,7 @@ class GameContainer extends Component {
     };
 
     handleKeyDown = (event) => {
+        console.log(event.keyCode);
         if (event.keyCode == 48) {
             this.setCurrentHandyInventoryItem(9);
         } else if (event.keyCode > 48 && event.keyCode <= 57) {
@@ -82,6 +85,7 @@ class GameContainer extends Component {
         return (
             <>
                 <DeveloperInterface player={this.props.player}/>
+                <RightColumnInterface focus={this.props.focus} focusOnGame={this.props.focusOnGame}/>
                 <div id="gameContainer"/>
                 <BottomInterface handyInventory={handyInventory}/>
             </>

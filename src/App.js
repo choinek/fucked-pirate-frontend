@@ -19,6 +19,7 @@ class App extends React.PureComponent {
                 }
             },
             players: [],
+            focus: 'game'
         };
     }
 
@@ -44,6 +45,16 @@ class App extends React.PureComponent {
         this.getBackend().sendData(this.state.player.server);
     }
 
+    focusOnChat() {
+        console.log('focus on chat!');
+        this.setState({ 'focus': 'chat' });
+    }
+
+    focusOnGame() {
+        console.log('focus on game!');
+        this.setState({ 'focus': 'game' });
+    }
+
     /**
      * @returns {Backend}
      */
@@ -67,7 +78,7 @@ class App extends React.PureComponent {
 
     backendHandleData(data) {
         if (data.players !== undefined) {
-            this.setState({players: data.players});
+            this.setState({ players: data.players });
         }
     }
 
@@ -81,7 +92,7 @@ class App extends React.PureComponent {
         return (
             <div className="App">
                 {this.state.player.loggedIn ?
-                    <GameContainer player={this.state.player}/>
+                    <GameContainer player={this.state.player} focus={this.state.focus} focusOnGame={() => this.focusOnGame()}/>
                     :
                     <LoginScreen loginPlayerHandler={this.loginPlayerHandler}/>
                 }

@@ -42,3 +42,10 @@ html, body {
     transform: rotate(360deg);
   }
 }
+
+input[type="text"]
+{
+  background: transparent;
+  border: none;
+  color: #fff;
+}

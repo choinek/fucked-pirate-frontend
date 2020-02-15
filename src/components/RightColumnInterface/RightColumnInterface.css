@@ -1,0 +1,26 @@
+#RightColumnInterface {
+    font-size: 16px;
+    color: #fff;
+    float: right;
+    width: 400px;
+    height: 90%;
+    border: 1px solid #fff;
+}
+
+#debugDiv {
+    padding: 4px;
+    text-align:left;
+    background: #343434;
+    height:80px;
+}
+
+#chatText {
+    padding: 4px;
+    text-align:left;
+    font-size: 12px;
+    clear: right;
+}
+
+#chatInput {
+    background: #008F11;
+}
