@@ -139,22 +139,30 @@ export default class GameScene extends Phaser.Scene {
         let that = this;
         cursors = that.input.keyboard.createCursorKeys();
 
-        function createNewPlayer(player) {
-            let playerGraphic = 'multiplayer-pirate-johntardo';
-            const playerImageObject = that.add.image(player.p.x, player.p.y, playerGraphic);
-            that.players.set(player.name, player);
-            that.players.set(player.name + '__phaserObject', playerImageObject);
+        function createNewPlayer(mpPlayer) {
+            const playerImageObject = that.physics.add.image(
+                mpPlayer.p.x,
+                mpPlayer.p.y,
+                'multiplayer-pirate-johntardo'
+            );
+
+            playerImageObject.body.setAllowGravity(false);
+
+            that.players.set(mpPlayer.name, mpPlayer);
+            that.players.set(mpPlayer.name + '__imageObject', playerImageObject);
+            that.players.set(mpPlayer.name + '__vectorObject', new Phaser.Math.Vector2());
+
             const textStyle = {
                 font: "16px Arial",
                 fill: "#ffffff",
                 stroke: "#000000",
                 wordWrap: true
             };
-            that.players.set(player.name + '__nameText',
+            that.players.set(mpPlayer.name + '__nameTextObject',
                 that.add.text(
-                    player.p.x - playerImageObject.width,
-                    player.p.y - playerImageObject.height,
-                    player.name,
+                    mpPlayer.p.x - playerImageObject.width,
+                    mpPlayer.p.y - playerImageObject.height,
+                    mpPlayer.name,
                     textStyle)
             );
         }
@@ -162,43 +170,37 @@ export default class GameScene extends Phaser.Scene {
         function handlePlayers(delta) {
             // foreach players table
             // console.log(that.reactApp.state.players);
-            that.reactApp.state.players.map(function (player) {
-                if (that.players.has(player.name)) {
-                    that.players.set(player.name, player);
+            that.reactApp.state.players.map(function (mpPlayer) {
+                if (that.players.has(mpPlayer.name)) {
+                    that.players.set(mpPlayer.name, mpPlayer);
                     /**
                      * @type {ArcadeImage}
                      */
-                    let playerImageObject = that.players.get(player.name + '__phaserObject');
-                    let playerTextObject = that.players.get(player.name + '__nameText');
-                    /**
-                     * @todo better movement
-                     */
-                    if (playerImageObject.x != player.p.x) {
-                        if (playerImageObject.movementX == 0) {
-                            playerImageObject.movementX = Math.round(Math.abs(playerImageObject.x - player.p.x) / 4);
-                        }
+                    const mpPlayerImageObject = that.players.get(mpPlayer.name + '__imageObject');
+                    const mpPlayerVectorObject = that.players.get(mpPlayer.name + '__vectorObject');
+                    const mpPlayerTextObject = that.players.get(mpPlayer.name + '__nameTextObject');
 
-                        const movement = Math.round(Math.abs(playerImageObject.x - player.p.x) / 4);
-                        playerImageObject.x = playerImageObject.x > player.p.x
-                            ? playerImageObject.x - movement
-                            : playerImageObject.x + movement;
-                        // playerImageObject.x = player.p.x;
-                        playerTextObject.x = playerImageObject.x - playerImageObject.width;
-                    } else {
-                        playerImageObject.movementX = 0;
+                    mpPlayerVectorObject.x = mpPlayer.p.x;
+                    mpPlayerVectorObject.y = mpPlayer.p.y;
+
+                    const distance = Phaser.Math.Distance.Between(
+                        mpPlayerImageObject.x,
+                        mpPlayerImageObject.y,
+                        mpPlayerVectorObject.x,
+                        mpPlayerVectorObject.y
+                    );
+
+                    if (distance > 20 && mpPlayerImageObject.body.speed == 0) {
+                        that.physics.moveToObject(mpPlayerImageObject, mpPlayerVectorObject, 520);
+                    } else if (mpPlayerImageObject.body.speed > 0) {
+                        mpPlayerImageObject.body.reset(mpPlayerVectorObject.x, mpPlayerVectorObject.y);
                     }
 
-                    if (playerImageObject.y != player.p.y) {
-                        const movement = Math.round(Math.abs(playerImageObject.y - player.p.y) / 4);
-                        playerImageObject.y = playerImageObject.y > player.p.y
-                            ? playerImageObject.y - movement
-                            : playerImageObject.y + movement;
-                        // playerImageObject.y = player.p.y;
-                        playerTextObject.y = playerImageObject.y - playerImageObject.height;
+                    mpPlayerTextObject.x = mpPlayerImageObject.x - mpPlayerImageObject.width;
+                    mpPlayerTextObject.y = mpPlayerImageObject.y - mpPlayerImageObject.height;
 
-                    }
-                } else if (player.name != that.reactApp.state.player.login) {
-                    createNewPlayer(player);
+                } else if (mpPlayer.name != that.reactApp.state.player.login) {
+                    createNewPlayer(mpPlayer);
                 }
             });
         }
