@@ -4,6 +4,7 @@ import GameContainer from "./components/GameContainer";
 import MainMenu from "./components/MainMenu";
 import LoginScreen from "./components/LoginScreen";
 import Backend from "./server/Backend";
+import { getGame } from "./game/game";
 
 class App extends React.PureComponent {
     constructor(props) {
@@ -19,7 +20,8 @@ class App extends React.PureComponent {
                 }
             },
             players: [],
-            focus: 'game'
+            focus: 'game',
+            chatMessages: []
         };
     }
 
@@ -53,6 +55,7 @@ class App extends React.PureComponent {
     focusOnGame() {
         console.log('focus on game!');
         this.setState({ 'focus': 'game' });
+        window.currentScene.input.keyboard.enableGlobalCapture();
     }
 
     /**
@@ -80,6 +83,14 @@ class App extends React.PureComponent {
         if (data.players !== undefined) {
             this.setState({ players: data.players });
         }
+        if (data.m !== undefined) {
+            let { chatMessages } = this.state;
+            chatMessages.push({
+                'date': new Date().getTime(),
+                'login': data.l,
+                'message': data.m
+            })
+        }
     }
 
     backendLog(message) {
@@ -88,11 +99,15 @@ class App extends React.PureComponent {
     }
 
     render() {
+        const { player, focus, chatMessages } = this.state;
         return (
             <div className="App">
                 {this.state.player.loggedIn ?
-                    <GameContainer player={this.state.player} focus={this.state.focus}
-                                   focusOnGame={() => this.focusOnGame()}/>
+                    <GameContainer player={player}
+                                   focus={focus}
+                                   focusOnGame={() => this.focusOnGame()}
+                                   chatMessages={chatMessages}
+                    />
                     :
                     <LoginScreen loginPlayerHandler={this.loginPlayerHandler}/>
                 }

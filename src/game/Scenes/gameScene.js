@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import 'phaser';
+import { getGame } from "../game";
 
 let player;
 let cursors;
@@ -18,8 +19,9 @@ export default class GameScene extends Phaser.Scene {
     objectsLayer;
 
     constructor() {
-        super('Game');
+        super('GameScene');
         this.reactApp = window.App;
+        window.currentScene = this;
     }
 
     preload() {
@@ -57,7 +59,6 @@ export default class GameScene extends Phaser.Scene {
         const backgroundLayer = map.createStaticLayer("Background", tileset, 0, 0);
         this.objectsLayer = map.createStaticLayer("Objects", tileset, 0, 0);
         this.objectsLayer.setCollisionByProperty({ Collide: true });
-
 
 
         player = this.physics.add.sprite(50, 50, 'pirate-johntardo');
@@ -134,20 +135,31 @@ export default class GameScene extends Phaser.Scene {
         this.input.keyboard.createCombo([38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13], { resetOnMatch: true }); // KONAMI code
     }
 
-    update() {
+    update(time, delta) {
         let that = this;
         cursors = that.input.keyboard.createCursorKeys();
 
         function createNewPlayer(player) {
             let playerGraphic = 'multiplayer-pirate-johntardo';
-            if (player.name != that.reactApp.state.player.login) {
-                const playerImageObject = that.add.image(player.p.x, player.p.y, playerGraphic);
-                that.players.set(player.name, player);
-                that.players.set(player.name + '__phaserObject', playerImageObject);
-            }
+            const playerImageObject = that.add.image(player.p.x, player.p.y, playerGraphic);
+            that.players.set(player.name, player);
+            that.players.set(player.name + '__phaserObject', playerImageObject);
+            const textStyle = {
+                font: "16px Arial",
+                fill: "#ffffff",
+                stroke: "#000000",
+                wordWrap: true
+            };
+            that.players.set(player.name + '__nameText',
+                that.add.text(
+                    player.p.x - playerImageObject.width,
+                    player.p.y - playerImageObject.height,
+                    player.name,
+                    textStyle)
+            );
         }
 
-        function handlePlayers() {
+        function handlePlayers(delta) {
             // foreach players table
             // console.log(that.reactApp.state.players);
             that.reactApp.state.players.map(function (player) {
@@ -157,31 +169,35 @@ export default class GameScene extends Phaser.Scene {
                      * @type {ArcadeImage}
                      */
                     let playerImageObject = that.players.get(player.name + '__phaserObject');
+                    let playerTextObject = that.players.get(player.name + '__nameText');
                     /**
                      * @todo better movement
                      */
                     if (playerImageObject.x != player.p.x) {
                         if (playerImageObject.movementX == 0) {
-                            playerImageObject.movementX = Math.round(Math.abs(playerImageObject.x - player.p.x) / 3);
+                            playerImageObject.movementX = Math.round(Math.abs(playerImageObject.x - player.p.x) / 4);
                         }
 
-                        const movement = Math.round(Math.abs(playerImageObject.x - player.p.x) / 3);
+                        const movement = Math.round(Math.abs(playerImageObject.x - player.p.x) / 4);
                         playerImageObject.x = playerImageObject.x > player.p.x
                             ? playerImageObject.x - movement
                             : playerImageObject.x + movement;
                         // playerImageObject.x = player.p.x;
+                        playerTextObject.x = playerImageObject.x - playerImageObject.width;
                     } else {
                         playerImageObject.movementX = 0;
                     }
 
                     if (playerImageObject.y != player.p.y) {
-                        const movement = Math.round(Math.abs(playerImageObject.y - player.p.y) / 3);
+                        const movement = Math.round(Math.abs(playerImageObject.y - player.p.y) / 4);
                         playerImageObject.y = playerImageObject.y > player.p.y
                             ? playerImageObject.y - movement
                             : playerImageObject.y + movement;
                         // playerImageObject.y = player.p.y;
+                        playerTextObject.y = playerImageObject.y - playerImageObject.height;
+
                     }
-                } else {
+                } else if (player.name != that.reactApp.state.player.login) {
                     createNewPlayer(player);
                 }
             });
@@ -238,7 +254,7 @@ export default class GameScene extends Phaser.Scene {
         }
 
         handleMovements(that);
-        handlePlayers();
+        handlePlayers(delta);
         handleGui();
         handleServerTick();
     }

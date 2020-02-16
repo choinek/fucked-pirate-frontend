@@ -79,13 +79,18 @@ class GameContainer extends Component {
     }
 
     render() {
+        const { focus, focusOnGame, chatMessages } = this.props;
         let handyInventory = JSON.parse(JSON.stringify(this.state.handyInventory));
         handyInventory[this.state.currentHandyInventoryItem].selected = true;
 
         return (
             <>
                 <DeveloperInterface player={this.props.player}/>
-                <RightColumnInterface focus={this.props.focus} focusOnGame={this.props.focusOnGame}/>
+                <RightColumnInterface
+                    focus={focus}
+                    focusOnGame={focusOnGame}
+                    chatMessages={chatMessages}
+                />
                 <div id="gameContainer"/>
                 <BottomInterface handyInventory={handyInventory}/>
             </>

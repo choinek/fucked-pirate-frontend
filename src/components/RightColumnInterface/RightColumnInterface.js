@@ -10,13 +10,7 @@ class RightColumnInterface extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            chatInput: '',
-            chatMessages: [
-                {
-                    date: Date.now(),
-                    message: 'First Chat Message On Top'
-                }
-            ]
+            chatInput: ''
         };
         this.handleChatInput = this.handleChatInput.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -56,13 +50,11 @@ class RightColumnInterface extends PureComponent {
      */
     handleSubmit(event) {
         const { chatInput } = this.state;
-        let { chatMessages } = this.state;
         if (chatInput) {
             this.getBackend().sendData(
                 { m: chatInput }
             );
-            chatMessages.push({ date: Date.now(), message: chatInput });
-            this.setState({ chatMessages: chatMessages, chatInput: '' });
+            this.setState({ chatInput: '' });
         }
         event.preventDefault();
         this.props.focusOnGame();
@@ -73,8 +65,9 @@ class RightColumnInterface extends PureComponent {
      * @returns {*}
      */
     renderChatMessages() {
-        return this.state.chatMessages.map(function (data) {
-            return <div class="chatMessage">[{data.date}] {data.message}</div>
+        const { chatMessages } = this.props;
+        return chatMessages.map(function (data) {
+            return <div class="chatMessage">[{data.date}] {data.login} says: {data.message}</div>
         });
     }
 
