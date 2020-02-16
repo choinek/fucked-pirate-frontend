@@ -190,9 +190,10 @@ export default class GameScene extends Phaser.Scene {
                         mpPlayerVectorObject.y
                     );
 
-                    if (distance > 4 && mpPlayerImageObject.body.speed == 0) {
+                    console.log(distance);
+                    if (distance > 20 && mpPlayerImageObject.body.speed == 0) {
                         that.physics.moveToObject(mpPlayerImageObject, mpPlayerVectorObject, 520);
-                    } else if (mpPlayerImageObject.body.speed > 0) {
+                    } else if (distance < 20 || mpPlayerImageObject.body.speed > 0) {
                         mpPlayerImageObject.body.reset(mpPlayerVectorObject.x, mpPlayerVectorObject.y);
                     }
 
