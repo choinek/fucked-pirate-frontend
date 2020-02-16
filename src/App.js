@@ -83,7 +83,6 @@ class App extends React.PureComponent {
     }
 
     backendLog(message) {
-
         console.log('backendLog');
         console.log(message);
     }
@@ -92,7 +91,8 @@ class App extends React.PureComponent {
         return (
             <div className="App">
                 {this.state.player.loggedIn ?
-                    <GameContainer player={this.state.player} focus={this.state.focus} focusOnGame={() => this.focusOnGame()}/>
+                    <GameContainer player={this.state.player} focus={this.state.focus}
+                                   focusOnGame={() => this.focusOnGame()}/>
                     :
                     <LoginScreen loginPlayerHandler={this.loginPlayerHandler}/>
                 }

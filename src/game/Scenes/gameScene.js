@@ -48,11 +48,10 @@ export default class GameScene extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('DeepForestTileset32', 'tiles');
         this.background = this.add.tileSprite(0, 0, 2552, 1200, "background-forest");
-        this.background.setScrollFactor(0.1);
+        this.background.setScrollFactor(0.2);
         this.background.setOrigin(0, 0);
 
         // const deepBackgroundLayer = map.createStaticLayer("Deep Background", tileset, 0, 0);
-
 
         const treesLayer = map.createStaticLayer("Trees", tileset, 0, 0);
         const backgroundLayer = map.createStaticLayer("Background", tileset, 0, 0);
@@ -146,8 +145,6 @@ export default class GameScene extends Phaser.Scene {
                 that.players.set(player.name, player);
                 that.players.set(player.name + '__phaserObject', playerImageObject);
             }
-
-
         }
 
         function handlePlayers() {
