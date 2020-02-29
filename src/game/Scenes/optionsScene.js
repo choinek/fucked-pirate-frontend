@@ -37,6 +37,7 @@ export default class OptionsScene extends Phaser.Scene {
         Phaser.Display.Align.In.Center(this.menuText, this.menuButton);
 
         this.menuButton.on('pointerdown', function (pointer) {
+            this.scene.stop('Options');
             this.scene.start('Title');
         }.bind(this));
     }

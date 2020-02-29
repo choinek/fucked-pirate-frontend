@@ -19,6 +19,7 @@ export default class TitleScene extends Phaser.Scene {
         this.centerButtonText(this.gameText, this.gameButton);
 
         this.gameButton.on('pointerdown', function (pointer) {
+            this.scene.stop('Title');
             this.scene.start('GameScene');
         }.bind(this));
 

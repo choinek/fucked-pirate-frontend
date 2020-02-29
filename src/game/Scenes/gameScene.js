@@ -37,21 +37,28 @@ export default class GameScene extends Phaser.Scene {
             'assets/player/pirateShootSprite40px.png',
             { frameWidth: 48, frameHeight: 40 }
         );
+        this.load.spritesheet('pirate-johntardo-death',
+            'assets/player/death16x27px.png',
+            { frameWidth: 16, frameHeight: 27 }
+        );
+
         this.load.image('tiles', 'assets/tilesets/deep-forest-tileset-32.png');
         this.load.image('multiplayer-pirate-johntardo', 'assets/pirate-johntardo.png');
         this.load.image('background-forest', 'assets/backgrounds/forest.png');
-        this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest.json');
+        this.load.tilemapTiledJSON('map', 'assets/tilemaps/deep-forest-2.json');
 
         this.load.audio('cut', ['assets/sounds/slash.wav']);
         this.load.audio('shoot', ['assets/sounds/shoot.wav']);
     }
 
     create() {
+        let that = this;
         const map = this.make.tilemap({ key: 'map' });
         const tileset = map.addTilesetImage('DeepForestTileset32', 'tiles');
         this.background = this.add.tileSprite(0, 0, 2552, 1200, "background-forest");
         this.background.setScrollFactor(0.2);
         this.background.setOrigin(0, 0);
+
 
         // const deepBackgroundLayer = map.createStaticLayer("Deep Background", tileset, 0, 0);
 
@@ -60,11 +67,40 @@ export default class GameScene extends Phaser.Scene {
         this.objectsLayer = map.createStaticLayer("Objects", tileset, 0, 0);
         this.objectsLayer.setCollisionByProperty({ Collide: true });
 
-
         player = this.physics.add.sprite(50, 50, 'pirate-johntardo');
+        player.body.alive = true;
         // player.setBounce(0.2);
         player.body.setGravityY(1000);
         player.setCollideWorldBounds(true);
+        player.body.onWorldBounds = true;
+
+        // add death listener
+        player.on('death', function (playerBody) {
+            playerBody.alive = false;
+            playerBody.gameObject.anims.play('death', true);
+            playerBody.onWorldBounds = false;
+            playerBody.gameObject.setCollideWorldBounds(false);
+            playerBody.setGravityY(false);
+            let deathVector = new Phaser.Math.Vector2();
+            deathVector.x = 50;
+            deathVector.y = 50;
+            that.physics.moveToObject(playerBody.gameObject, deathVector, 1000);
+            that.time.addEvent({
+                delay:500,
+                callback: function() {
+                    // that.scene.stop('GameScene');
+                    // that.scene.start('Title');
+                }
+            })
+        });
+
+        // function which is fired after body touch bounds
+        function onWorldBounds(body) {
+            // emit death function
+            body.gameObject.emit('death', body);
+        }
+
+        this.physics.world.on('worldbounds', onWorldBounds);
 
         this.anims.create({
             key: 'left',
@@ -100,6 +136,13 @@ export default class GameScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'death',
+            frames: this.anims.generateFrameNumbers('pirate-johntardo-death', { start: 0, end: 2 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
         const cutSound = this.sound.add('cut', { volume: 0.2, loop: false });
         const shootSound = this.sound.add('shoot', { volume: 0.2, loop: false });
         player.on('animationrepeat-cut', function () {
@@ -121,7 +164,7 @@ export default class GameScene extends Phaser.Scene {
 
         // set the boundaries of our game world
         this.physics.world.bounds.width = this.objectsLayer.width;
-        // this.physics.world.bounds.height = this.objectsLayer.height;
+        this.physics.world.bounds.height = this.objectsLayer.height;
 
         // set bounds so the camera won't go outside the game world
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -191,19 +234,6 @@ export default class GameScene extends Phaser.Scene {
                     );
 
                     if (distance > 4) {
-                        // if (!mpPlayerVectorObject.movingFromY
-                        //     || mpPlayerVectorObject.movingFromY > mpPlayerVectorObject.movingToY) {
-                        //     that.physics.moveToObject(mpPlayerImageObject, mpPlayerVectorObject, 520);
-                        //     mpPlayerVectorObject.movingFromX = mpPlayerImageObject.x;
-                        //     mpPlayerVectorObject.movingFromY = mpPlayerImageObject.y;
-                        //     mpPlayerVectorObject.movingToX = mpPlayerVectorObject.x;
-                        //     mpPlayerVectorObject.movingToY = mpPlayerVectorObject.y;
-                        // } else {
-                        //     mpPlayerVectorObject.x = mpPlayerVectorObject.movingToX;
-                        //     mpPlayerVectorObject.y = mpPlayerVectorObject.movingToY;
-                        //     that.physics.moveToObject(mpPlayerImageObject, mpPlayerVectorObject, 520);
-                        // }
-
                         that.physics.moveToObject(mpPlayerImageObject, mpPlayerVectorObject, 520);
 
                     } else if (distance <= 4 && mpPlayerImageObject.body.speed > 0) {
@@ -269,7 +299,10 @@ export default class GameScene extends Phaser.Scene {
             }
         }
 
-        handleMovements(that);
+        if (player.body.alive == true) {
+            handleMovements(that);
+        }
+
         handlePlayers(delta);
         handleGui();
         handleServerTick();
